@@ -1,0 +1,29 @@
+#+TITLE: Genetic Rockets By Nls
+* What is it?
+genetic-rockets is a simple project which uses genetic algorithms to find an 
+optimal(or at least a good enough) solution to any "maze".
+
+* How does it work?
+Each rocket has a dna object, which is an array of velotities. The rocket will 
+use these velocities and try to reach the target.
+First we generate 50 rockets, each with it's own random dna. 
+After they all crash/run out of time(determined by the length of the dna object)
+we evaluate how each rocket did and generate a new generation of 50 rockets based on
+those who did best. Each of the new rocket's dna is made by combining the dna of 2 other
+rockets from the last generation, and by a few random mutations. Rinse and repeat untill we 
+end up with a good enough solution
+
+** How do we determine which rocket did best?
+   The following is the function which calculates each rocket's score(aka fitness):
+#+BEGIN_SRC javascript
+  calculateFitness(target){
+      let dis = Math.floor(Math.sqrt( Math.pow( target.x - this.x,2 ) + Math.pow(target.y - this.y,2)));
+      this.fitness = this.ctx.height - dis;
+      if (this.hasCollided) {
+          this.fitness -= 400;
+      }
+      if (this.hasSucceeded) {
+          this.fitness += 1000;
+      }
+  }
+#+END_SRC
