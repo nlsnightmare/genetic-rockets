@@ -27,3 +27,9 @@ end up with a good enough solution
       }
   }
 #+END_SRC
+As you can see, the fitness function first calculates the distance to the target.
+However, since we want a smaller distance to lead to better score, we subtract it from the 
+height of the window(which is pretty much a magic number). After that, we check if the rocket
+has collided with an obstacle and remove points if it did. Finally, if the rocket succeded in 
+reaching the target we give it a boost of 1000 points.
+   
