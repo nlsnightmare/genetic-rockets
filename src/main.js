@@ -79,6 +79,7 @@ function Draw() {
 	rockets[i].draw();
     }
 
+    //Τέλος Προσωμοίωσης
     if (time_elapsed >= GENE_LEN * dt) {
 	clearInterval(drawCall);
 	CalculateRocketFitness();
@@ -140,8 +141,10 @@ function GenerateNext() {
     for (let i = 0; i < 2; i++) {
 	let g = rockets[i].genes;
 	let r = new Rocket(ctx,rockets[i].name,GENE_LEN);
+	//Αποθηκεύουμε τα γονίδιά τους
 	r.genes = g;
 	newRockets.push(r);
+	//Για να τους ξεχωρίζουμε, τους κάνουμε να έχουν πράσινο χρώμα
 	r.setColor('green');
     }
 
