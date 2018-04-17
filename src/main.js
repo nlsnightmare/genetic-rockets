@@ -8,6 +8,8 @@ import axios from 'axios';
 const GENE_LEN = 400;
 const NUM_ROCKETS = 50;
 
+const speed = document.getElementById('speed');
+
 let ctx;
 let rockets = [];
 let rankings;
@@ -20,8 +22,10 @@ let obstacle;
 
 let drawCall;
 let generation = 1;
-const dt = ( 1000/60 );
+// const dt = ( 1000/60 );
+const dt = 10;
 const newGenDelay = 20;
+let nextGenTimeout;
 let time_elapsed = 0;
 
 window.onload = () => {
@@ -36,60 +40,57 @@ window.onload = () => {
     ranking = document.getElementById('gen');
     rankings = document.getElementById('ranking-list');
 
-    GetNames(NUM_ROCKETS, (data) => {
-	for (var i = 0; i < data.length; i++) {
-	    const name = data[i].login.username;
-	    //Δημιουργία Αρχικού Πληθυσμού με τυχαία ονόματα
-	    rockets.push(new Rocket(ctx,name,GENE_LEN));
-	}
-	drawCall = setInterval(Draw,dt);
-    });
+    for (var i = 0; i < NUM_ROCKETS; i++) {
+	const name = `g0n${i}`;
+	//Δημιουργία Αρχικού Πληθυσμού με τυχαία ονόματα
+	rockets.push(new Rocket(ctx,name,GENE_LEN));
+    }
+    requestAnimationFrame(Draw);
 
 };
-function GetNames(num,callback) {
-    axios.get('https://randomuser.me/api/?nat=gb&results=' + NUM_ROCKETS).then((responce) => {
-	const data = responce.data.results;
-	callback(data);
-    });
-}
 
 function Draw() {
-
     ClearCanvas('lightblue');
     target.draw();
     if (hasObstacle) {
 	obstacle.draw();
     }
+    for (let rocket of rockets) {
+	rocket.draw();
+    }
 
-    for (let i = 0; i < rockets.length; i++) {
+    for( let i = 0; i < speed.value; i++){
+	for (let rocket of rockets) {
+	    if (rocket.hasCollided || rocket.hasSucceeded) {
+		continue;
+	    }
+	    rocket.time = time_elapsed;
+	    rocket.update();
+	    let dis = Math.pow(rocket.x - target.x, 2) + Math.pow(rocket.y - target.y, 2);
+	    //Φτάσαμε στον στόχο μας
+	    if (dis <= target.r * target.r) {
+		rocket.hasSucceeded = true;
+	    }
 
-	let dis = Math.pow(rockets[i].x - target.x, 2) + Math.pow(rockets[i].y - target.y, 2);
-	//Φτάσαμε στον στόχο μας
-	if (dis <= target.r * target.r) {
-	    rockets[i].hasSucceeded = true;
-	}
-
-	if (hasObstacle) {
-	    //Χτυπήσαμε με το εμπόδιο
-	    if (obstacle.collidesWith(rockets[i])) {
-		rockets[i].hasCollided = true;
-		rockets[i].setColor('red');
+	    if (hasObstacle) {
+		//Χτυπήσαμε με το εμπόδιο
+		if (obstacle.collidesWith(rocket)) {
+		    rocket.hasCollided = true;
+		    rocket.setColor('red');
+		}
 	    }
 	}
-	rockets[i].draw();
-    }
+	time_elapsed += dt;
 
-    if (time_elapsed >= GENE_LEN * dt) {
-	clearInterval(drawCall);
-	CalculateRocketFitness();
-	DisplayRankings();
-	GenerateNext();
-	setTimeout(() => {
-	    drawCall = setInterval(Draw, dt);
+	if (time_elapsed >= GENE_LEN * dt) {
 	    time_elapsed = 0;
-	},newGenDelay);
+	    CalculateRocketFitness();
+	    DisplayRankings();
+	    GenerateNext();
+	    //TODO: finished
+	}
     }
-    time_elapsed += dt;
+    requestAnimationFrame(Draw);
 }
 
 function InitializeContext() {
@@ -145,26 +146,24 @@ function GenerateNext() {
 	r.setColor('green');
     }
 
-    GetNames(NUM_ROCKETS - 2, (data) => {
-	for (let i = 0; i < NUM_ROCKETS - 2; i++) {
-	    const name = data[i].login.username;
+    for (let i = 0; i < NUM_ROCKETS - 2; i++) {
+	const name = `g${generation}n${i}`;
 
-	    //Επιλογή 2 τυχαίων πυραύλων
-	    let index1 = Math.floor( Math.random() * genepool.length );
-	    let index2 = Math.floor( Math.random() * genepool.length );
+	//Επιλογή 2 τυχαίων πυραύλων
+	let index1 = Math.floor( Math.random() * genepool.length );
+	let index2 = Math.floor( Math.random() * genepool.length );
 
-	    let r1 = genepool[index1];
-	    let r2 = genepool[index2];
+	let r1 = genepool[index1];
+	let r2 = genepool[index2];
 
-	    //Ανταλλαγή γονιδίων
-	    let g = r1.genes.crossover(r2.genes);
-	    let r = new Rocket(ctx,name,GENE_LEN);
-	    r.genes = g;
-	    newRockets.push(r);
-	}
-	rockets = newRockets;
-	generation++;
-    });
+	//Ανταλλαγή γονιδίων
+	let g = r1.genes.crossover(r2.genes);
+	let r = new Rocket(ctx,name,GENE_LEN);
+	r.genes = g;
+	newRockets.push(r);
+    }
+    rockets = newRockets;
+    generation++;
 }
 
 function SetupObstacleButton(){

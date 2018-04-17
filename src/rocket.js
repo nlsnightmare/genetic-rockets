@@ -21,6 +21,8 @@ export default class Rocket {
 	this.h = ROCKET_HEIGHT;
 
 	this.genes = new DNA(len);
+
+	this.time = 0;
     }
 
     setColor(c){
@@ -29,23 +31,24 @@ export default class Rocket {
 
     calculateFitness(target){
 	let dis = Math.floor(Math.sqrt( Math.pow( target.x - this.x,2 ) + Math.pow(target.y - this.y,2)));
-	this.fitness = (this.ctx.height - dis) - 400 * this.hasCollided + 1000 * this.hasSucceeded;
+	this.fitness = (this.ctx.height - dis) - 400 * this.hasCollided - this.time / 10 + this.hasSucceeded * 1500;
     }
 
 
-    draw(){
+    update(){
 	const speed = this.genes.dna[this.curr];
 	if (speed !== undefined && !this.hasCollided && !this.hasSucceeded) {
 	    this.x += speed.x;
 	    this.y += speed.y;
 	}
+	this.curr++;
+    }
+
+    draw(){
 	this.ctx.fillStyle = this.color;
 	this.ctx.fillRect(this.x,this.y,this.w,this.h);
 	this.ctx.fillStyle = 'black';
 	this.ctx.lineWidth = '3';
 	this.ctx.strokeRect(this.x,this.y,this.w,this.h);
-	
-
-	this.curr++;
     }
 }
