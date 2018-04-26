@@ -1,11 +1,12 @@
 const SCALE = 20;
-const MUTATION_RATE = 0.2;
+const MUTATION_RATE = 0.01;
+const GENE_LEN = 400;
 
 export default class DNA {
-    constructor(len){
-	this.dna = Array(len);
+    constructor(){
+	this.dna = Array(GENE_LEN);
 
-	for (var i = 0; i < len; i++) {
+	for (var i = 0; i < GENE_LEN; i++) {
 	    this.dna[i] = {
 		x: ( Math.random() - 0.5 ) * SCALE,
 		y: ( Math.random() - 0.5 ) * SCALE,
