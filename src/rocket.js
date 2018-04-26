@@ -20,7 +20,7 @@ export default class Rocket {
 	this.w = ROCKET_WIDTH;
 	this.h = ROCKET_HEIGHT;
 
-	this.genes = new DNA(len);
+	this.genes = new DNA();
 
 	this.time = 0;
     }

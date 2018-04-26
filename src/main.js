@@ -5,7 +5,6 @@ import Target from './target';
 import Obstacle from './obstacle';
 import axios from 'axios';
 
-const GENE_LEN = 400;
 const NUM_ROCKETS = 50;
 
 const speed = document.getElementById('speed');
@@ -28,6 +27,8 @@ const newGenDelay = 20;
 let nextGenTimeout;
 let time_elapsed = 0;
 
+let max_fuel;
+
 window.onload = () => {
     ctx = InitializeContext();
     target = new Target(ctx,ctx.width/2 - 25,50,20);
@@ -43,8 +44,10 @@ window.onload = () => {
     for (var i = 0; i < NUM_ROCKETS; i++) {
 	const name = `g0n${i}`;
 	//Δημιουργία Αρχικού Πληθυσμού με τυχαία ονόματα
-	rockets.push(new Rocket(ctx,name,GENE_LEN));
+	rockets.push(new Rocket(ctx,name));
     }
+
+    max_fuel = rockets[0].genes.getLength();
     requestAnimationFrame(Draw);
 
 };
@@ -82,12 +85,11 @@ function Draw() {
 	}
 	time_elapsed += dt;
 
-	if (time_elapsed >= GENE_LEN * dt) {
+	if (time_elapsed >= max_fuel * dt) {
 	    time_elapsed = 0;
 	    CalculateRocketFitness();
 	    DisplayRankings();
 	    GenerateNext();
-	    //TODO: finished
 	}
     }
     requestAnimationFrame(Draw);
