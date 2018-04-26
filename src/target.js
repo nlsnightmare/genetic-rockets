@@ -6,6 +6,12 @@ export default class Target  {
 	this.r = r;
     }
 
+    collidesWith(r){
+	let colsX = this.x < r.x + r.w && this.x + this.r > r.x;
+	let colsY = this.y < r.y + r.h && this.y + this.r > r.y;
+
+	return colsX && colsY;
+    }
     
     draw(){
 	this.ctx.beginPath();

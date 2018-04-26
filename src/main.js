@@ -69,9 +69,7 @@ function Draw() {
 	    }
 	    rocket.time = time_elapsed;
 	    rocket.update();
-	    let dis = Math.pow(rocket.x - target.x, 2) + Math.pow(rocket.y - target.y, 2);
-	    //Φτάσαμε στον στόχο μας
-	    if (dis <= target.r * target.r) {
+	    if(target.collidesWith(rocket)){
 		rocket.hasSucceeded = true;
 	    }
 
