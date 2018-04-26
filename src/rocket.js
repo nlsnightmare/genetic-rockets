@@ -31,7 +31,14 @@ export default class Rocket {
 
     calculateFitness(target){
 	let dis = Math.floor(Math.sqrt( Math.pow( target.x - this.x,2 ) + Math.pow(target.y - this.y,2)));
-	this.fitness = (this.ctx.height - dis) - 400 * this.hasCollided - this.time / 10 + this.hasSucceeded * 1500;
+	this.fitness =  Math.pow(dis - this.ctx.height,2);
+	if (this.hasCollided) {
+	    this.fitness /= 100;
+	}
+	else if (this.hasSucceeded) {
+	    this.fitness *= 100;
+	}
+	this.fitness /= this.time;
     }
 
 
