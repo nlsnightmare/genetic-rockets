@@ -14,6 +14,10 @@ export default class DNA {
 	}
     }
 
+    getLength(){
+	return GENE_LEN;
+    }
+
     crossover(other){
 	let nDNA = new DNA(this.dna.length);
 
