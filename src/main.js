@@ -127,20 +127,21 @@ function CalculateRocketFitness() {
 }
 
 function GenerateNext() {
-    let genepool = [];
     let newRockets = [];
 
-    for (let i = 0; i < rockets.length; i++) {
-	const percentage = rockets.length - i*i;
-	for (let j = 0; j < percentage; j++) {
-	    genepool.push(rockets[i]);
+
+    // Εύρεση του καλύτερου σκορ
+    let maxFitness = -Infinity;
+    for (const r of rockets) {
+	if (r.fitness > maxFitness) {
+	    maxFitness = r.fitness;
 	}
     }
 
-    //Διατήρηση των 2 καλύτερων πυραύλων για την επόμενη γενιά
-    for (let i = 0; i < 2; i++) {
+    //Διατήρηση των 3 καλύτερων πυραύλων για την επόμενη γενιά
+    for (let i = 0; i < 3; i++) {
 	let g = rockets[i].genes;
-	let r = new Rocket(ctx,rockets[i].name,GENE_LEN);
+	let r = new Rocket(ctx,rockets[i].name);
 	r.genes = g;
 	newRockets.push(r);
 	r.setColor('green');
@@ -150,21 +151,36 @@ function GenerateNext() {
 	const name = `g${generation}n${i}`;
 
 	//Επιλογή 2 τυχαίων πυραύλων
-	let index1 = Math.floor( Math.random() * genepool.length );
-	let index2 = Math.floor( Math.random() * genepool.length );
-
-	let r1 = genepool[index1];
-	let r2 = genepool[index2];
+	let r1 = AcceptReject(maxFitness);
+	let r2 = AcceptReject(maxFitness);
 
 	//Ανταλλαγή γονιδίων
 	let g = r1.genes.crossover(r2.genes);
-	let r = new Rocket(ctx,name,GENE_LEN);
+	let r = new Rocket(ctx,name);
 	r.genes = g;
 	newRockets.push(r);
     }
     rockets = newRockets;
     generation++;
 }
+
+function AcceptReject(max) {
+    let safety = 0;
+    while(true){
+	let r = Math.floor(Math.random() * max);
+	let i = Math.floor(Math.random() * rockets.length);
+
+	if (rockets[i].fitness > r) {
+	    return rockets[i];
+	}
+
+	if (safety >= 1000)
+	    throw new Error("AcceptReject couldn't find a rocket!");
+	safety++;
+    }
+}
+
+
 
 function SetupObstacleButton(){
     obstacleButton = document.getElementById("toggle-obstacle");
