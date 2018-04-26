@@ -112,7 +112,7 @@ function DisplayRankings() {
     rankings.innerHTML = '';
     for (var i = 0; i < rockets.length; i++) {
 	let r = rockets[i];
-	rankings.innerHTML += '<li>' + r.name + ' score: ' + r.fitness + '</li>';
+	rankings.innerHTML += '<li>' + r.name + ' score: ' + r.fitness.toFixed(2) + '</li>';
     }
 }
 
