@@ -3,7 +3,6 @@ import './style.css';
 import Rocket from './rocket';
 import Target from './target';
 import Obstacle from './obstacle';
-import axios from 'axios';
 
 const NUM_ROCKETS = 50;
 
