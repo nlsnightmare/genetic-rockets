@@ -25,10 +25,16 @@ export default class DNA {
 	    }
 
 	    if (Math.random() < MUTATION_RATE) {
-		nDNA.dna[i] = {
-		    x: ( Math.random() - 0.5 ) * SCALE,
-		    y: ( Math.random() - 0.5 ) * SCALE
-		};
+		if (Math.random() < 0.5) {
+		    nDNA.dna[i].x += ( Math.random() - 0.5 ) * SCALE / 10;
+		    nDNA.dna[i].y += ( Math.random() - 0.5 ) * SCALE / 10;
+		}
+		else {
+		    nDNA.dna[i] = {
+			x: ( Math.random() - 0.5 ) * SCALE,
+			y: ( Math.random() - 0.5 ) * SCALE
+		    };
+		}
 	    }
 	}
 
