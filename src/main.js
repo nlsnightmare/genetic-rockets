@@ -3,10 +3,9 @@ import './style.css';
 import Rocket from './rocket';
 import Target from './target';
 import Obstacle from './obstacle';
+import {speed, numRockets} from './controlls';
 
-const NUM_ROCKETS = 50;
 
-const speed = document.getElementById('speed');
 
 let ctx;
 let rockets = [];
@@ -15,8 +14,8 @@ let ranking;
 let target;
 
 let obstacleButton;
-let hasObstacle = false;
-let obstacle;
+let hardModeButton;
+let obstacles = [];
 
 let drawCall;
 let generation = 1;
@@ -30,38 +29,41 @@ let max_fuel;
 
 window.onload = () => {
     ctx = InitializeContext();
-    target = new Target(ctx,ctx.width/2 - 25,50,20);
+    target = new Target(ctx,ctx.width/2 - 25,50,10);
     SetupObstacleButton();
 
-    if (hasObstacle) {
-	obstacle = new Obstacle(ctx,( ctx.width - 250) /2,ctx.height-300,250,50);
-    }
 
     ranking = document.getElementById('gen');
     rankings = document.getElementById('ranking-list');
+    MakeFirstGeneration();
 
-    for (var i = 0; i < NUM_ROCKETS; i++) {
-	const name = `g0n${i}`;
-	//Δημιουργία Αρχικού Πληθυσμού με τυχαία ονόματα
-	rockets.push(new Rocket(ctx,name));
-    }
 
     max_fuel = rockets[0].genes.getLength();
     requestAnimationFrame(Draw);
 
 };
 
+function MakeFirstGeneration() {
+    rockets = [];
+
+    for (var i = 0; i < numRockets(); i++) {
+	const name = `g0n${i}`;
+	rockets.push(new Rocket(ctx,name));
+    }
+}
+
+
 function Draw() {
     ClearCanvas('lightblue');
     target.draw();
-    if (hasObstacle) {
+    for (let obstacle of obstacles) {
 	obstacle.draw();
     }
     for (let rocket of rockets) {
 	rocket.draw();
     }
 
-    for( let i = 0; i < speed.value; i++){
+    for( let i = 0; i < speed(); i++){
 	for (let rocket of rockets) {
 	    if (rocket.hasCollided || rocket.hasSucceeded) {
 		continue;
@@ -72,7 +74,7 @@ function Draw() {
 		rocket.hasSucceeded = true;
 	    }
 
-	    if (hasObstacle) {
+	    for (let obstacle of obstacles) {
 		//Χτυπήσαμε με το εμπόδιο
 		if (obstacle.collidesWith(rocket)) {
 		    rocket.hasCollided = true;
@@ -127,18 +129,10 @@ function CalculateRocketFitness() {
 
 function GenerateNext() {
     let newRockets = [];
+    let maxFitness = rockets[0].fitness;
 
-
-    // Εύρεση του καλύτερου σκορ
-    let maxFitness = -Infinity;
-    for (const r of rockets) {
-	if (r.fitness > maxFitness) {
-	    maxFitness = r.fitness;
-	}
-    }
-
-    //Διατήρηση των 3 καλύτερων πυραύλων για την επόμενη γενιά
-    for (let i = 0; i < 3; i++) {
+    //Διατήρηση των 2 καλύτερων πυραύλων για την επόμενη γενιά
+    for (let i = 0; i < 2; i++) {
 	let g = rockets[i].genes;
 	let r = new Rocket(ctx,rockets[i].name);
 	r.genes = g;
@@ -146,7 +140,7 @@ function GenerateNext() {
 	r.setColor('green');
     }
 
-    for (let i = 0; i < NUM_ROCKETS - 2; i++) {
+    for (let i = 0; i < numRockets() - 2; i++) {
 	const name = `g${generation}n${i}`;
 
 	//Επιλογή 2 τυχαίων πυραύλων
@@ -184,14 +178,14 @@ function AcceptReject(max) {
 function SetupObstacleButton(){
     obstacleButton = document.getElementById("toggle-obstacle");
     obstacleButton.onclick = () => {
-	if (hasObstacle) {
-	    obstacle = undefined;
+	if (obstacles.length > 0) {
+	    obstacles = [];
 	    obstacleButton.innerHTML = 'Enable Obstacle';
 	}
 	else {
-	    obstacle = new Obstacle(ctx,( ctx.width - 250) /2,ctx.height-300,250,50);
+	    obstacles.push(new Obstacle(ctx,( ctx.width - 250) /2,ctx.height-300,250,50));
 	    obstacleButton.innerHTML = 'Disable Obstacle';
 	}
-	hasObstacle = !hasObstacle;
     };
 }
+

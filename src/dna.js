@@ -1,5 +1,7 @@
+import {mutationRate} from './controlls';
+
+
 const SCALE = 20;
-const MUTATION_RATE = 0.01;
 const GENE_LEN = 400;
 
 export default class DNA {
@@ -19,6 +21,7 @@ export default class DNA {
     }
 
     crossover(other){
+	const mutation_rate = mutationRate();
 	let nDNA = new DNA(this.dna.length);
 
 	for (var i = 0; i < this.dna.length; i++) {
@@ -29,7 +32,7 @@ export default class DNA {
 		nDNA.dna[i] = other.dna[i];
 	    }
 
-	    if (Math.random() < MUTATION_RATE) {
+	    if (Math.random() < mutation_rate) {
 		if (Math.random() < 0.5) {
 		    nDNA.dna[i].x += ( Math.random() - 0.5 ) * SCALE / 10;
 		    nDNA.dna[i].y += ( Math.random() - 0.5 ) * SCALE / 10;
