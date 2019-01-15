@@ -1,7 +1,7 @@
 import {mutationRate} from './controlls';
 
 
-const SCALE = 20;
+const SCALE = 1;
 const GENE_LEN = 400;
 
 export default class DNA {

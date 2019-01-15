@@ -1,5 +1,6 @@
 const ROCKET_HEIGHT = 50;
 const ROCKET_WIDTH = 20;
+const GRAVITY = -2;
 
 import DNA from './dna';
 
@@ -19,6 +20,8 @@ export default class Rocket {
         this.y = this.ctx.height - ROCKET_HEIGHT;
         this.w = ROCKET_WIDTH;
         this.h = ROCKET_HEIGHT;
+
+        this.speed = { x:0, y: 0 };
 
         this.genes = new DNA();
 
@@ -53,12 +56,16 @@ export default class Rocket {
 
     update(){
         // Select current speed
-        const speed = this.genes.dna[this.curr];
+        const accel = this.genes.dna[this.curr];
         // As long as we haven't reached our target or collided, keep going 
-        if (speed !== undefined && !this.hasCollided && !this.hasSucceeded) {
-            this.x += speed.x;
-            this.y += speed.y;
+        if (accel !== undefined && !this.hasCollided && !this.hasSucceeded) {
+            this.speed.x += accel.x;
+            this.speed.y += accel.y;
         }
+
+        this.x += this.speed.x;
+        this.y += this.speed.y;
+        this.y -= GRAVITY;
         this.curr++;
     }
 

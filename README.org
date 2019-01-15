@@ -16,16 +16,26 @@ end up with a good enough solution
 ** How do we determine which rocket did best?
    The following is the function which calculates each rocket's score(aka fitness):
 #+BEGIN_SRC javascript
-  calculateFitness(target){
-      let dis = Math.floor(Math.sqrt( Math.pow( target.x - this.x,2 ) + Math.pow(target.y - this.y,2)));
-      this.fitness = this.ctx.height - dis;
-      if (this.hasCollided) {
-          this.fitness -= 400;
-      }
-      if (this.hasSucceeded) {
-          this.fitness += 1000;
-      }
-  }
+    calculateFitness(target){
+        // Calculate Euclidean Distance from the target
+        let dis = Math.floor(Math.sqrt( Math.pow( target.x - this.x,2 ) + Math.pow(target.y - this.y,2)));
+        // We want out fitness to get bigger as the distance gets smaller
+        if (dis > this.ctx.height) {
+            this.fitness = 0;
+            return;
+        }
+        this.fitness =  Math.pow(dis - this.ctx.height,2);
+        // "Punish" rockets who have collided 
+        if (this.hasCollided) {
+            this.fitness /= 100;
+        }
+        // "Reward" rockets who succeed
+        else if (this.hasSucceeded) {
+            this.fitness *= 10;
+        }
+        // Also "Punish" rockets who are late
+        this.fitness /= this.time;
+    }
 #+END_SRC
 As you can see, the fitness function first calculates the distance to the target.
 However, since we want a smaller distance to lead to better score, we subtract it from the 
@@ -34,5 +44,6 @@ has collided with an obstacle and remove points if it did. Finally, if the rocke
 reaching the target we give it a boost of 1000 points.
 
 * TODO's
-** TODO Add a time heuristic for the rockets
+** DONE Add time heuristic
+   CLOSED: [2019-01-15 Tue 13:40]
 ** TODO Fix the target to rocket collision and make it more accurate
