@@ -1,11 +1,13 @@
-#+TITLE: Genetic Rockets By Nls
+#+TITLE: Genetic Rockets
 * What is it?
 genetic-rockets is a simple project which uses genetic algorithms to find an 
 optimal(or at least a good enough) solution to any "maze".
 
 * How does it work?
-Each rocket has a dna object, which is an array of velotities. The rocket will 
-use these velocities and try to reach the target.
+Each rocket has a dna object, which is an array of accelerations. The rocket will 
+use these velocities and try to reach the target while avoiding an obstacle,
+as well as fighting gravity.
+
 First we generate 50 rockets, each with it's own random dna. 
 After they all crash/run out of time(determined by the length of the dna object)
 we evaluate how each rocket did and generate a new generation of 50 rockets based on
