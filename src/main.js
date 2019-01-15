@@ -63,7 +63,7 @@ function Draw() {
 	rocket.draw();
     }
 
-    for( let i = 0; i < speed(); i++){
+    for(let i = 0; i < speed(); i++){
 	for (let rocket of rockets) {
 	    if (rocket.hasCollided || rocket.hasSucceeded) {
 		continue;
@@ -188,4 +188,3 @@ function SetupObstacleButton(){
 	}
     };
 }
-
