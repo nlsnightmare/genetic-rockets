@@ -45,6 +45,9 @@ height of the window(which is pretty much a magic number). After that, we check 
 has collided with an obstacle and remove points if it did. Finally, if the rocket succeded in 
 reaching the target we give it a boost of 1000 points.
 
+* How can I run it?
+Well, simply clone/download the repository, run `npm install` and `npm run build`, open the file dist/index.html and you're done!
+
 * TODO's
 ** DONE Add time heuristic
    CLOSED: [2019-01-15 Tue 13:40]
